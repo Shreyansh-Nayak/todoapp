@@ -3,23 +3,29 @@ import { useEffect, useState } from "react";
 const VoiceInput = ({ onCommand }) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [recognition, setRecognition] = useState(null);
 
-  let recognition;
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recog = new SpeechRecognition();
+      recog.continuous = false;
+      recog.interimResults = false;
+      recog.lang = "en-US";
+      setRecognition(recog);
+    } else {
+      alert("Speech Recognition not supported in this browser");
+    }
 
-  // Check for browser support
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-  }
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, []);
 
   const startListening = () => {
-    if (!recognition) {
-      alert("Speech Recognition not supported in this browser");
-      return;
-    }
+    if (!recognition) return;
 
     setIsListening(true);
     recognition.start();
@@ -37,13 +43,20 @@ const VoiceInput = ({ onCommand }) => {
     };
   };
 
+  const stopListening = () => {
+    recognition.stop();
+    setIsListening(false);
+  };
+
   return (
     <div className="my-4 flex items-center gap-4">
       <button
-        onClick={startListening}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        onClick={isListening ? stopListening : startListening}
+        className={`px-4 py-2 rounded ${
+          isListening ? "bg-red-600" : "bg-blue-600 hover:bg-blue-700"
+        } text-white`}
       >
-        🎤 Speak Task
+        {isListening ? "🎙️ Listening..." : "🎤 Speak Task"}
       </button>
       {transcript && <span className="text-sm text-gray-700">You said: "{transcript}"</span>}
     </div>

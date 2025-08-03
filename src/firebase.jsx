@@ -4,13 +4,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDxdcTY2fjoXg7Ogthk6M8gc3DczNOGUYM",
-  authDomain: "itask-8e510.firebaseapp.com",
-  projectId: "itask-8e510",
-  storageBucket: "itask-8e510.appspot.com",
-
-  messagingSenderId: "548017830982",
-  appId: "1:548017830982:web:531af4821f8dc72de21e47"
+  apiKey: import.meta.env.FIREBASE_API_KEY,
+  authDomain: import.meta.env.FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.FIREBASE_APP_ID
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
